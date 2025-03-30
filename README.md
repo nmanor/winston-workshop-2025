@@ -28,11 +28,17 @@ A modern, real-time server monitoring dashboard built with Next.js that tracks s
 The dashboard automatically updates every 10 seconds to provide real-time monitoring.
 
 ## Challenges
+### Step 0: Preparation  
+1. Clone the project.  
+2. Create a new branch and name it after yourself.  
+3. Run `npm install` to install the necessary dependencies.  
+4. After installation is complete, run `npm run dev`.
+
 ### Step 1: Adding General Logs
 To improve observability, add Winston logs to track API calls. Each request to the API (add server, remove server, etc.) should log its details to the console using Winston's `Console` transport.
 Choose the relevant log level, and **set different color to each log level** when printing the logs.
 
-### Step 2: Logging Server Status to a File
+### Step 2: Logging Server Stability to a File
 Enhance the system by ensuring that every time the dashboard checks the status of the servers, it logs the results to a file. Use Winston's `File` transport.
 Each log entry should be stored in JSON format and must include:
 
@@ -60,10 +66,10 @@ You can choose to log these errors to a `File` transport for persistent storage 
 If you want to test it, modify the `checkServerStatus` function in `/api/servers` so that it randomly throws an error from time to time.
 
 ### Step 5: Expanding Exception Handling  
-In this step, you need to implement a Custom Transport that will send the exceptions and rejections from Step 4 to a database of your choice. 
-While you can use one of the pre-built Winston transporters, it’s recommended to implement your own custom transporter. For example, there isn't a pre-built transporter for Microsoft SQL, so you'll need to create one that handles sending logs to the SQL server.
+Implement a Custom Transport that will send the exceptions and rejections from Step 4 to a database of your choice. 
+While you can use one of the pre-built Winston transporters, it's recommended to implement your own custom transporter. For example, there isn't a pre-built transporter for Microsoft SQL, so you'll need to create one that handles sending logs to the SQL server.
 
 ### Step 6: If You Have Extra Time...  
 Improve the servers stability calculation mechanism by implementing the following changes:  
-- Store all logs, including those sent to the API, in the same database where the exceptions are being logged. This way, you will have a complete record of all logs in one place.  
-- Create a new function that will run whenever server status information is needed. This function should retrieve only the logs that are marked with the `info` level (excluding the `error` level). It will then use this information to calculate the server stability by analyzing the relevant logs stored in the database.
+- Store all logs, including those sent to the API, in the same database where the exceptions and rejections are being logged. This way, you will have a complete record of all logs in one place.  
+- Create a new function that will run whenever server stability information is needed. This function should retrieve only the logs that are marked with the `info` level (excluding the `error` level of the exceptions and rejections). It will then use this information to calculate the server stability by analyzing the relevant logs stored in the database.
