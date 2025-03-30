@@ -10,7 +10,7 @@ let servers: Server[] = [
     url: 'https://prod-server.com', 
     status: 'unknown',
     statusHistory: [],
-    stability: 100
+    stability: 0
   },
   { 
     id: 2, 
@@ -18,11 +18,11 @@ let servers: Server[] = [
     url: 'https://dev-server.com', 
     status: 'unknown',
     statusHistory: [],
-    stability: 100
+    stability: 0
   },
 ];
 
-const MAX_HISTORY = 5;
+const MAX_HISTORY = 10;
 
 export async function GET() {
   return NextResponse.json(servers);
@@ -37,11 +37,28 @@ export async function POST(request: Request) {
     url: body.url,
     status: 'unknown',
     statusHistory: [],
-    stability: 100
+    stability: 0
   };
   
   servers.push(newServer);
   return NextResponse.json(newServer);
+}
+
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+  
+  if (!id) {
+    return new NextResponse('Server ID is required', { status: 400 });
+  }
+
+  const serverIndex = servers.findIndex(server => server.id === Number(id));
+  if (serverIndex === -1) {
+    return new NextResponse('Server not found', { status: 404 });
+  }
+
+  servers.splice(serverIndex, 1);
+  return new NextResponse(null, { status: 204 });
 }
 
 // Helper function to check server status
