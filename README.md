@@ -42,3 +42,28 @@ Each log entry should be stored in JSON format and must include:
     
 
 This will create a historical record of server status checks, making it easier to analyze trends and diagnose issues.
+
+### Step 3: Sending Logs to an External API
+
+In this step, you will configure Winston to send logs to an external API.
+
+1.  Add an  `Http` transport to Winston that will send log data to the following API endpoint:  **https://winston-workshop-2025-api.vercel.app/api/log**.
+    
+2.  Modify the log format to include a  `label`  containing your name. This will help distinguish your logs from others.
+    
+3.  Once this setup is complete, navigate to the  **[Log Viewer](https://winston-workshop-2025-api.vercel.app)**, where logs from all users are displayed. Look for your name to find and review your logs.
+
+###  Step 4: Supporting Exception Handling  
+
+Add support for logging **exceptions** and **promise rejections** to ensure that all critical errors are recorded.  
+You can choose to log these errors to a `File` transport for persistent storage or to the `Console` for real-time monitoring.
+If you want to test it, modify the `checkServerStatus` function in `/api/servers` so that it randomly throws an error from time to time.
+
+### Step 5: Expanding Exception Handling  
+In this step, you need to implement a Custom Transport that will send the exceptions and rejections from Step 4 to a database of your choice. 
+While you can use one of the pre-built Winston transporters, it’s recommended to implement your own custom transporter. For example, there isn't a pre-built transporter for Microsoft SQL, so you'll need to create one that handles sending logs to the SQL server.
+
+### Step 6: If You Have Extra Time...  
+Improve the servers stability calculation mechanism by implementing the following changes:  
+- Store all logs, including those sent to the API, in the same database where the exceptions are being logged. This way, you will have a complete record of all logs in one place.  
+- Create a new function that will run whenever server status information is needed. This function should retrieve only the logs that are marked with the `info` level (excluding the `error` level). It will then use this information to calculate the server stability by analyzing the relevant logs stored in the database.
