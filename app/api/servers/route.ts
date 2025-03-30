@@ -4,9 +4,25 @@ import { revalidatePath } from 'next/cache';
 
 // In-memory storage (replace with database in production)
 let servers: Server[] = [
-  { id: 1, name: 'Production Server', url: 'https://prod-server.com', status: 'unknown' },
-  { id: 2, name: 'Development Server', url: 'https://dev-server.com', status: 'unknown' },
+  { 
+    id: 1, 
+    name: 'Production Server', 
+    url: 'https://prod-server.com', 
+    status: 'unknown',
+    statusHistory: [],
+    stability: 100
+  },
+  { 
+    id: 2, 
+    name: 'Development Server', 
+    url: 'https://dev-server.com', 
+    status: 'unknown',
+    statusHistory: [],
+    stability: 100
+  },
 ];
+
+const MAX_HISTORY = 5;
 
 export async function GET() {
   return NextResponse.json(servers);
@@ -19,7 +35,9 @@ export async function POST(request: Request) {
     id: servers.length + 1,
     name: body.name,
     url: body.url,
-    status: 'unknown'
+    status: 'unknown',
+    statusHistory: [],
+    stability: 100
   };
   
   servers.push(newServer);
@@ -36,12 +54,24 @@ async function checkServerStatus(url: string): Promise<'online' | 'offline'> {
   }
 }
 
+function calculateStability(history: ('online' | 'offline')[]): number {
+  if (history.length === 0) return 100;
+  const onlineCount = history.filter(status => status === 'online').length;
+  return Math.round((onlineCount / history.length) * 100);
+}
+
 // Update server statuses periodically
 setInterval(async () => {
   servers = await Promise.all(
-    servers.map(async (server) => ({
-      ...server,
-      status: await checkServerStatus(server.url)
-    }))
+    servers.map(async (server) => {
+      const currentStatus = await checkServerStatus(server.url);
+      const newHistory = [...server.statusHistory, currentStatus].slice(-MAX_HISTORY);
+      return {
+        ...server,
+        status: currentStatus,
+        statusHistory: newHistory,
+        stability: calculateStability(newHistory)
+      };
+    })
   );
-}, 60000); 
+}, 10 * 1000); 
