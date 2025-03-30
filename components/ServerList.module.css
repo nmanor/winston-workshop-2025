@@ -58,8 +58,19 @@
 
 .stabilityFill {
   height: 100%;
-  background: linear-gradient(to right, #22c55e, #16a34a);
   transition: width 0.3s ease;
+}
+
+.highStabilityFill {
+  background: linear-gradient(to right, #22c55e, #16a34a);
+}
+
+.mediumStabilityFill {
+  background: linear-gradient(to right, #eab308, #ca8a04);
+}
+
+.lowStabilityFill {
+  background: linear-gradient(to right, #ef4444, #dc2626);
 }
 
 .stabilityText {
@@ -153,4 +164,38 @@
         opacity: 1;
         transform: scale(1);
     }
+}
+
+.description {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.legend {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.highStabilityDot, .mediumStabilityDot, .lowStabilityDot {
+    margin-left: 0.5rem;
+    font-size: 1rem;
+}
+
+.highStabilityDot {
+    color: #22c55e;
+}
+
+.mediumStabilityDot {
+    color: #eab308;
+}
+
+.lowStabilityDot {
+    color: #ef4444;
 } 

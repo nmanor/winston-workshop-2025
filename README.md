@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Server Monitor
+## Winston Workshop - Dev team
 
-## Getting Started
 
-First, run the development server:
+A modern, real-time server monitoring dashboard built with Next.js that tracks server uptime and stability.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Usage
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Adding a Server
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Enter the server name and URL in the form at the top of the dashboard
+2. Click "Add Server" to begin monitoring
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Monitoring
 
-## Learn More
+- Each server card shows:
+  - Server name
+  - URL
+  - Stability percentage based on the last 10 status checks
+  - Visual stability indicator
+- Cards are color-coded based on stability:
+  - Green: 90-100% uptime
+  - Yellow: 75-89% uptime
+  - Red: Below 75% uptime
 
-To learn more about Next.js, take a look at the following resources:
+### Auto-Refresh
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The dashboard automatically updates every 10 seconds to provide real-time monitoring.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Challenges
+### Step 1: Adding General Logs
+To improve observability, add Winston logs to track API calls. Each request to the API (add server, remove server, etc.) should log its details to the console using Winston's `Console` transport.
+Choose the relevant log level, and **set different color to each log level** when printing the logs.
 
-## Deploy on Vercel
+### Step 2: Logging Server Status to a File
+Enhance the system by ensuring that every time the dashboard checks the status of the servers, it logs the results to a file. Use Winston's `File` transport.
+Each log entry should be stored in JSON format and must include:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-   The timestamp of when the check was performed.
+    
+-   The status of each server at that time.
+    
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This will create a historical record of server status checks, making it easier to analyze trends and diagnose issues.

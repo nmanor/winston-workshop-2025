@@ -5,6 +5,9 @@ import styles from './ServerList.module.css';
 import { Server } from '@/types/server';
 
 const REFRESH_INTERVAL = 10 * 1000; // 10 seconds
+const MAX_HISTORY = 10; // Assuming a default value, actual implementation might vary
+const MEDIUM_STABILITY_LIMIT = 30;
+const HIGHT_STABILITY_LIMIT = 70;
 
 const ServerList = forwardRef<{ fetchServers: () => void }>(function ServerList(_, ref) {
     const [servers, setServers] = useState<Server[]>([]);
@@ -37,9 +40,15 @@ const ServerList = forwardRef<{ fetchServers: () => void }>(function ServerList(
     }, []);
 
     const getStabilityClass = (stability: number) => {
-        if (stability >= 90) return styles.highStability;
-        if (stability >= 75) return styles.mediumStability;
+        if (stability >= HIGHT_STABILITY_LIMIT) return styles.highStability;
+        if (stability >= MEDIUM_STABILITY_LIMIT) return styles.mediumStability;
         return styles.lowStability;
+    };
+
+    const getStabilityColor = (stability: number) => {
+        if (stability >= HIGHT_STABILITY_LIMIT) return styles.highStabilityFill;
+        if (stability >= MEDIUM_STABILITY_LIMIT) return styles.mediumStabilityFill;
+        return styles.lowStabilityFill;
     };
 
     const handleRemoveServer = async (id: number) => {
@@ -47,7 +56,7 @@ const ServerList = forwardRef<{ fetchServers: () => void }>(function ServerList(
             const response = await fetch(`/api/servers?id=${id}`, {
                 method: 'DELETE',
             });
-            
+
             if (response.ok) {
                 fetchServers();
             }
@@ -58,6 +67,14 @@ const ServerList = forwardRef<{ fetchServers: () => void }>(function ServerList(
 
     return (
         <>
+            <div className={styles.description}>
+                Showing server stability based on the last {MAX_HISTORY} status checks.
+                <span className={styles.legend}>
+                    <span className={styles.highStabilityDot}>●</span> {HIGHT_STABILITY_LIMIT}-100%
+                    <span className={styles.mediumStabilityDot}>●</span> {MEDIUM_STABILITY_LIMIT}-{HIGHT_STABILITY_LIMIT}%
+                    <span className={styles.lowStabilityDot}>●</span> 0-{MEDIUM_STABILITY_LIMIT}%
+                </span>
+            </div>
             <div className={styles.refreshInfo}>
                 <div className={styles.lastUpdate}>
                     Last update: {lastUpdate.toLocaleTimeString()}
@@ -74,7 +91,7 @@ const ServerList = forwardRef<{ fetchServers: () => void }>(function ServerList(
                     >
                         <div className={styles.cardHeader}>
                             <h3 className={styles.serverName}>{server.name}</h3>
-                            <button 
+                            <button
                                 onClick={() => handleRemoveServer(server.id)}
                                 className={styles.removeButton}
                                 aria-label="Remove server"
@@ -85,8 +102,8 @@ const ServerList = forwardRef<{ fetchServers: () => void }>(function ServerList(
                         <p className={styles.serverUrl}>URL: {server.url}</p>
                         <div className={styles.stabilityWrapper}>
                             <div className={styles.stabilityBar}>
-                                <div 
-                                    className={styles.stabilityFill} 
+                                <div
+                                    className={`${styles.stabilityFill} ${getStabilityColor(server.stability)}`}
                                     style={{ width: `${server.stability}%` }}
                                 />
                             </div>

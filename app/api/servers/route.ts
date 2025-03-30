@@ -7,15 +7,23 @@ let servers: Server[] = [
   { 
     id: 1, 
     name: 'Production Server', 
-    url: 'https://prod-server.com', 
+    url: 'https://winston-workshop-2025-api.vercel.app/api/random-status', 
     status: 'unknown',
     statusHistory: [],
     stability: 0
   },
   { 
     id: 2, 
+    name: 'QA Server', 
+    url: 'https://winston-workshop-2025-api.vercel.app/api/random-status', 
+    status: 'unknown',
+    statusHistory: [],
+    stability: 0
+  },
+  { 
+    id: 3, 
     name: 'Development Server', 
-    url: 'https://dev-server.com', 
+    url: 'https://winston-workshop-2025-api.vercel.app/api/random-status', 
     status: 'unknown',
     statusHistory: [],
     stability: 0
